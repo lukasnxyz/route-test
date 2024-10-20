@@ -1,8 +1,18 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <curl/curl.h>
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
+
+/* TODO:
+ * - add cli param parsing
+*/
+
+class Logger {
+private:
+public:
+};
 
 class Test {
 private:
@@ -10,6 +20,57 @@ private:
   std::string url;
   std::string endpoint;
   std::map<std::string, std::string> params;
+
+  std::string compose_request() {
+    std::string r;
+    r.append(url);
+    r.append(endpoint);
+    if (!params.empty()) {
+      r.append("?");
+      for (const auto &p : params) {
+        r.append(p.first + "=" + p.second);
+        if (/*p not at end*/true) {
+          r.append("&");
+        }
+      }
+    }
+
+    return r;
+  }
+
+  static size_t WriteCallback(void *contents, const size_t size, const size_t nmemb, std::string *output) {
+    const size_t total_size = size * nmemb;
+    output->append((char*)contents, total_size);
+    return total_size;
+  }
+
+  std::string r_curl(std::string in_url) {
+    const char *r_in_url = in_url.c_str();
+    CURL* curl;
+    CURLcode res;
+    std::string read_buffer;
+
+    curl = curl_easy_init();
+    if (curl) {
+      curl_easy_setopt(curl, CURLOPT_URL, r_in_url);
+
+      curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+      curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
+
+      res = curl_easy_perform(curl);
+
+      if (res != CURLE_OK) {
+        // TODO: change error logging
+        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+      } else {
+        return read_buffer; 
+      }
+
+      curl_easy_cleanup(curl);
+    }
+
+    return NULL;
+  }
 
 public:
   Test(std::string n_id, std::string n_url, std::string n_endpoint, std::map<std::string, std::string> n_params) :
@@ -25,6 +86,13 @@ public:
         std::cout << "\t" << p.first << ": " << p.second << std::endl;
       }
     }
+  }
+
+  void run(Logger logger) {
+    std::string r = compose_request();
+    std::cout << "testing: " << r << std::endl;
+    std::string res = r_curl(r);
+    std::cout << res << std::endl;
   }
 };
 
@@ -60,11 +128,14 @@ public:
   }
 
   void run_all() {
+    Logger logger = Logger();
+    for (auto &t : tests) {
+      t.run(logger);
+    }
   }
 };
 
 int main(int argc, char *argv[]) {
-  // TODO: check input args
   if (argc != 2) {
     std::cout << "[ERROR]: pass in a file path" << std::endl;
     return 0;
@@ -78,6 +149,7 @@ int main(int argc, char *argv[]) {
 
   Tests custom_tests = Tests(f);
   custom_tests.print_all();
+  custom_tests.run_all();
 
   return 0;
 }
