@@ -1,9 +1,9 @@
 {
   "t1": {
-    "id": "1",
+    "id": "amenity point and distance",
     "url": "http://localhost:8010",
     "endpoint": "/amenities",
-    "params": {
+    "parameters": {
       "point.x": "15.44679",
       "point.y": "47.06646",
       "point.d": "100",
@@ -12,8 +12,37 @@
     }
   },
   "t2": {
-    "id": "2",
+    "id": "amenity by id",
     "url": "http://localhost:8010",
-    "endpoint": "/amenities/26899640"
+    "endpoint": "/amenities/26899640",
+    "expected_response": {
+      "geom": {
+        "coordinates": [
+          15.4393231,
+          47.0686148
+        ],
+        "crs": {
+          "properties": {
+            "name": "EPSG:0"
+          },
+          "type": "name"
+        },
+        "type": "Point"
+      },
+      "id": 26899640,
+      "name": "Polizeiinspektion Schmiedgasse",
+      "tags": {
+        "addr:city": "Graz",
+        "addr:country": "AT",
+        "addr:housenumber": "26",
+        "addr:postcode": "8010",
+        "addr:street": "Schmiedgasse",
+        "amenity": "police",
+        "name": "Polizeiinspektion Schmiedgasse",
+        "phone": "+43 59133 6593 100",
+        "wheelchair": "yes"
+      },
+      "type": "police"
+    }
   }
 }
