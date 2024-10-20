@@ -1,0 +1,19 @@
+{
+  "t1": {
+    "id": "1",
+    "url": "http://localhost:8010",
+    "endpoint": "/amenities",
+    "params": {
+      "point.x": "15.44679",
+      "point.y": "47.06646",
+      "point.d": "100",
+      "take": "2",
+      "amenity": "restaurant"
+    }
+  },
+  "t2": {
+    "id": "2",
+    "url": "http://localhost:8010",
+    "endpoint": "/amenities/26899640"
+  }
+}
