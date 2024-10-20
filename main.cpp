@@ -9,11 +9,10 @@ using json = nlohmann::json;
 #define CURL_FAIL "CURL_FAIL"
 #define INDENT_LEN 2
 
-/* TODO:
- * - add cli param parsing
- * - write own json lib
- * - write own curl lib
- * - currently only works with GET requests
+/*
+// TODO:
+class Json {
+};
 */
 
 class Logger {
@@ -30,6 +29,12 @@ public:
     std::cout << "\e[32m[SUCCESS]: " << msg << "\e[0m" << std::endl;
   }
 };
+
+/*
+// TODO: GET, POST methods with curl
+class Fetch {
+};
+*/
 
 class Test {
 private:
@@ -184,6 +189,7 @@ public:
 };
 
 int main(int argc, char *argv[]) {
+  // TODO: add proper cli command parsing
   if (argc != 2) {
     Logger::error("you must pass in a json file!");
     return 0;
