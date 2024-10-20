@@ -89,10 +89,11 @@ public:
   }
 
   void run(Logger logger) {
-    std::string r = compose_request();
+    const std::string r = compose_request();
     std::cout << "testing: " << r << std::endl;
-    std::string res = r_curl(r);
-    std::cout << res << std::endl;
+    const std::string res = r_curl(r);
+    const json j = json::parse(res);
+    std::cout << j.dump(2) << std::endl;
   }
 };
 
@@ -109,11 +110,11 @@ public:
     for (auto &t : j) {
       std::map<std::string, std::string> n_params;
       if (t["params"] != NULL) {
-        for (auto &[k, v] : t["params"].items()) {
+        for (const auto &[k, v] : t["params"].items()) {
           n_params.insert(std::make_pair(k, v));
         }
       }
-      Test n_test = Test(t["id"], t["url"], t["endpoint"], n_params);
+      const Test n_test = Test(t["id"], t["url"], t["endpoint"], n_params);
       tests.push_back(n_test);
     }
 
